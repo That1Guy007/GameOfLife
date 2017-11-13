@@ -92,7 +92,12 @@ double life(int matrix_size, int ntimes, MPI_Comm comm){
 
         /* find out the value of the current cell */
 
-    	  //need to wrap here!!!!!!!!
+    	  /*
+    	   * Need to wrap!
+    	   * only need to wrap on i = 0 and i = Matrix_size/size, and matrix_size/size -1, and
+    	   * i = matrix size.
+    	   *
+    	   */
 
         sum = matrix[i-1][j-1] + matrix[i-1][j] + matrix[i-1][j+1]
           + matrix[i][j-1] + matrix[i][j+1]
