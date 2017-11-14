@@ -46,10 +46,13 @@ double life(int matrix_size, int ntimes, MPI_Comm comm){
   /* allocate the memory dynamically for the matrix */
   matrix = (int **)malloc(sizeof(int *)*(mysize+2)) ;
   temp = (int **)malloc(sizeof(int *)*(mysize+2)) ;
+  addr = (int **)malloc(sizeof(int *)*(mysize+2)) ;
 
   for (i = 0; i < mysize+2; i++) {
     matrix[i] = (int *)malloc(sizeof(int)*(matrix_size+2)) ;
     temp[i] = (int *)malloc(sizeof(int)*(matrix_size+2))  ; //columns
+    addr[i] = (int *)malloc(sizeof(int)*(matrix_size+2)) ;
+
   }
 
   /* Initialize the boundaries of the life matrix *//*
@@ -70,9 +73,14 @@ double life(int matrix_size, int ntimes, MPI_Comm comm){
         matrix[i][j] = DIES ;
     }
   }
+  for(i = 0; i <4; i++){
+	  for(j= 0; j < mysize; i++){
+		  addr[i][j]=DIES;
+	  }
 
+  }
   /* Play the game of life for given number of iterations */
-  starttime = MPI_Wtime() ;
+  //starttime = MPI_Wtime() ;
 
   for (k = 0; k < ntimes; k++) {
 
@@ -93,7 +101,11 @@ double life(int matrix_size, int ntimes, MPI_Comm comm){
     MPI_Send(&matrix[matrix_size -1][loop], 1, MPI_INT, rank +1, 0, MPI_COMM_WORLD);//bottom
     //MPI_Send(&matrix[loop][matrix_size -1], 1, MPI_INT, rank -1, 0, MPI_COMM_WORLD);//right
 
-    //MPI_Recv();
+    MPI_Recv(&addr[0][loop], 1, MPI_INT, rank + 1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+    MPI_Recv(&addr[1][loop], 1, MPI_INT, rank - 1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+    MPI_Recv(&addr[2][loop], 1, MPI_INT, rank + 1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+    MPI_Recv(&addr[3][loop], 1, MPI_INT, rank + 1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
     }
     /* For each element of the matrix ... */
     for (i = 0; i < mysize; i++) {
