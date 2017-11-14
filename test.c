@@ -79,13 +79,22 @@ double life(int matrix_size, int ntimes, MPI_Comm comm){
     MPI_Request      req[4];
     MPI_Status       status[4];
 
-    /* Send and receive boundary information */
+    /* Send and receive boundary information
     MPI_Isend(&matrix[1][0],matrix_size+2,MPI_INT,prev,0,comm,req);
     MPI_Irecv(&matrix[0][0],matrix_size+2,MPI_INT,prev,0,comm,req+1);
     MPI_Isend(&matrix[mysize][0],matrix_size+2,MPI_INT,next,0,comm,req+2);
     MPI_Irecv(&matrix[mysize+1][0],matrix_size+2,MPI_INT,next,0,comm,req+3);
-    MPI_Waitall(4, req, status);
+    MPI_Waitall(4, req, status);*/
+    for(int loop = 0; loop < matrix_size; loop ++ ){
+    //MPI_Send(&matrix[loop][0], 1, MPI_INT, rank -1, 0, MPI_COMM_WORLD);//left side
+    MPI_Send(&matrix[0][loop], 1, MPI_INT, rank -1, 0, MPI_COMM_WORLD);//top to array above
+    MPI_Send(&matrix[0][loop], 1, MPI_INT, rank + 1, 0, MPI_COMM_WORLD);//top to array below
+    MPI_Send(&matrix[matrix_size -1][loop], 1, MPI_INT, rank -1, 0, MPI_COMM_WORLD);//bottom
+    MPI_Send(&matrix[matrix_size -1][loop], 1, MPI_INT, rank +1, 0, MPI_COMM_WORLD);//bottom
+    //MPI_Send(&matrix[loop][matrix_size -1], 1, MPI_INT, rank -1, 0, MPI_COMM_WORLD);//right
 
+    //MPI_Recv();
+    }
     /* For each element of the matrix ... */
     for (i = 0; i < mysize; i++) {
       for (j = 0; j < matrix_size; j++) {
@@ -98,10 +107,27 @@ double life(int matrix_size, int ntimes, MPI_Comm comm){
     	   * i = matrix size.
     	   *
     	   */
+    	if(i == 0){
+    		if(j == 0){
+    			//corner info
+    			//sum = matrix[][];
+    		}
+    		//send and recieve top border nieghbor info
+    	}
+    	else if(j == 0 || j == mysize -1){
+    		//left and right side info
+    	}
+    	else if(j == matrix_size-1){
+    		//bottom border info
+    	}
+    	else{
+    		//inner matrix
+    	}
 
+    	  /*
         sum = matrix[i-1][j-1] + matrix[i-1][j] + matrix[i-1][j+1]
           + matrix[i][j-1] + matrix[i][j+1]
-            + matrix[i+1][j-1] + matrix[i+1][j] + matrix[i+1][j+1] ;
+            + matrix[i+1][j-1] + matrix[i+1][j] + matrix[i+1][j+1] ;*/
 
         /* check if the cell dies or life is born */
         if (sum < 2 || sum > 3)
