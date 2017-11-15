@@ -22,12 +22,18 @@ double life(int matrix_size, int ntimes, MPI_Comm comm) {
 	MPI_Comm_rank(comm, &rank);
 
 	/* Set neighbors */
+
+	/*BUSHAN SHA
+	 * Maybe I should just set this to wrap, then I will just use prev and next
+	 * to coordinate which process gets what
+	 */
+
 	if (rank == 0)
-		prev = MPI_PROC_NULL;
+		prev = MPI_PROC_NULL; // means there is no previous process
 	else
 		prev = rank - 1;
 	if (rank == size - 1)
-		next = MPI_PROC_NULL;
+		next = MPI_PROC_NULL; // means there is no next process
 	else
 		next = rank + 1;
 
@@ -103,6 +109,12 @@ double life(int matrix_size, int ntimes, MPI_Comm comm) {
 		 MPI_Isend(&matrix[mysize][0],matrix_size+2,MPI_INT,next,0,comm,req+2);
 		 MPI_Irecv(&matrix[mysize+1][0],matrix_size+2,MPI_INT,next,0,comm,req+3);
 		 MPI_Waitall(4, req, status);*/
+
+
+
+		/*
+		 * THIS ISNT RIGHT YET....NEED TO MODIFY COE ABOVE (NEXT AND PREVIOUS)
+		 */
 		for (int loop = 0; loop < matrix_size; loop++) {
 			//MPI_Send(&matrix[loop][0], 1, MPI_INT, rank -1, 0, MPI_COMM_WORLD);//left side
 			MPI_Send(&matrix[0][loop], 1, MPI_INT, rank - 1, 0, MPI_COMM_WORLD); //top of array to array above
