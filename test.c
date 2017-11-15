@@ -126,8 +126,10 @@ double life(int matrix_size, int ntimes, MPI_Comm comm) {
 					 MPI_Isend(&matrix[0][loop],1,MPI_INT,prev,0,comm,req);
 					 MPI_Irecv(&addr[0][loop],1,MPI_INT,prev,0,comm,req+1);
 					 MPI_Isend(&matrix[matrix_size -1][loop],1,MPI_INT,next,0,comm,req+2);
-					 MPI_Irecv(&matrix[1][loop],1,MPI_INT,next,0,comm,req+3);
+					 MPI_Irecv(&addr[1][loop],1,MPI_INT,next,0,comm,req+3);
 					 MPI_Waitall(4, req, status);
+
+
 
 /*
 			//MPI_Send(&matrix[loop][0], 1, MPI_INT, rank -1, 0, MPI_COMM_WORLD);//left side
